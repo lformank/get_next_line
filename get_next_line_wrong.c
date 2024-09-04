@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_wrong.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lformank <lformank@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/25 17:32:10 by lformank          #+#    #+#             */
-/*   Updated: 2024/09/04 16:31:17 by lformank         ###   ########.fr       */
+/*   Created: 2024/09/04 12:16:08 by lformank          #+#    #+#             */
+/*   Updated: 2024/09/04 14:25:23 by lformank         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 int	search_newline(char *storage)
 {
-	int			i;
+	int	i;
 
 	i = 0;
 	while (storage[i] != '\0')
@@ -133,15 +133,14 @@ char	*ft_substr(const char *s, unsigned int start, int len)
 	return (dest);
 }
 
-char	*get_text_stored(int fd, char *stack, char *buffer, char **pprint)
+char	*get_text_stored(int fd, char *stack, char *buffer)
 {
 	int		zero;
 	int		position;
-	char	*print;
 
 	zero = BUFFER_SIZE;
 	position = 1;
-	while (zero >= 0 && position != 0)
+	while (zero == BUFFER_SIZE && position != 0)
 	{
 		zero = read(fd, buffer, BUFFER_SIZE);
 		if (zero != 0)
@@ -150,17 +149,10 @@ char	*get_text_stored(int fd, char *stack, char *buffer, char **pprint)
 			position = search_newline(stack);
 			if (position > -1)
 			{
-				print = ft_substr(stack, 0, position + 1);
-				*pprint = print;
+				putstr(stack, position);
 				stack = ft_substr(stack, position + 1, ft_strlen(stack) - (position + 1));
 				break;
 			}
-		}
-		else
-		{
-			print = ft_strdup(stack);
-			*pprint = print;
-			return (stack);
 		}
 	}
 	free (buffer);
@@ -171,10 +163,7 @@ char	*get_next_line(int fd)
 {
 	static char	*storage;
 	char 		*buffer;
-	char		*pprint;
-	char		*stack;
 
-	pprint = 0;
 	buffer = (char *)malloc((BUFFER_SIZE + 1)* sizeof(char));
 	if (fd < 0 || BUFFER_SIZE <= 0)
 	{
@@ -186,10 +175,8 @@ char	*get_next_line(int fd)
 		storage = (char *)malloc(1 * sizeof(char));
 	if (!storage || !buffer)
 		return (0);
-	stack = get_text_stored(fd, storage, buffer, &pprint);
-	storage = stack;
-//	printf("storage: %s!", storage);
-	return (pprint);
+	storage = get_text_stored(fd, storage, buffer);
+	return (storage);
 }
 
 int	main(void)
@@ -200,9 +187,9 @@ int	main(void)
 	i = 0;
 	fd = 0;
 	fd = open("private.txt", O_RDONLY);
-	while (i < 4)
+	while (i < 2)
 	{
-		printf("newline:%s!", get_next_line(fd));
+		get_next_line(fd);
 		i++;
 	}
 	close(fd);
