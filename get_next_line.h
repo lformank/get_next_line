@@ -6,7 +6,7 @@
 /*   By: lformank <lformank@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 13:51:36 by lformank          #+#    #+#             */
-/*   Updated: 2024/08/28 12:10:54 by lformank         ###   ########.fr       */
+/*   Updated: 2024/09/06 16:36:07 by lformank         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-# define BUFFER_SIZE 42
+#  define BUFFER_SIZE 42
 
-#endif
+# endif
 
 # include <unistd.h>
 # include <stdio.h>
@@ -27,4 +27,13 @@
 # include <fcntl.h>
 
 char	*get_next_line(int fd);
+char	*get_text_stored(int fd, char *stack, char *buffer, char **pprint);
+char	*ft_substr(const char *s, unsigned int start, int len);
+char	*ft_strdup(const char *s);
+int		search_newline(char *storage);
+char	*ft_strjoin(char const *s1, char const *s2);
+void	putstr(char *s, int len);
+char	*ft_calloc(int nmemb, int size);
+int		ft_strlen(const char *s);
+
 #endif
