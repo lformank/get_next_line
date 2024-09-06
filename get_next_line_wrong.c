@@ -70,13 +70,14 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	while (s2[i] != '\0')
 		dest[j++] = s2[i++];
 	dest[j] = '\0';
-	free((void *)s1);
+	free ((void *)s1);
+	free ((void *)s2);
 	return (dest);
 }
 
 int	search_newline(char *storage)
 {
-	int	i;
+	int			i;
 
 	i = 0;
 	while (storage[i] != '\0')
@@ -106,6 +107,7 @@ char	*ft_strdup(const char *s)
 		i++;
 	}
 	ptr[i] = '\0';
+	free ((void *)s);
 	return (ptr);
 }
 
@@ -133,37 +135,49 @@ char	*ft_substr(const char *s, unsigned int start, int len)
 	return (dest);
 }
 
-char	*get_text_stored(int fd, char *stack, char *buffer)
+char	*get_text_stored(int fd, char *stack, char *buffer, char **pprint)
 {
 	int		zero;
 	int		position;
+	char	*print;
+	char	*storage;
 
 	zero = BUFFER_SIZE;
 	position = 1;
+	storage = 0;
+	print = 0;
 	while (zero == BUFFER_SIZE && position != 0)
 	{
 		zero = read(fd, buffer, BUFFER_SIZE);
-		if (zero != 0)
+		stack = ft_strjoin(stack, buffer);
+		position = search_newline(stack);
+		if (zero <= BUFFER_SIZE && zero != 0 && position > -1)
 		{
-			stack = ft_strjoin(stack, buffer);
-			position = search_newline(stack);
-			if (position > -1)
-			{
-				putstr(stack, position);
-				stack = ft_substr(stack, position + 1, ft_strlen(stack) - (position + 1));
-				break;
-			}
+			print = ft_substr(stack, 0, position + 1);
+			*pprint = print;
+			storage = ft_substr(stack, position + 1, ft_strlen(stack) - (position + 1));
+			return (storage);
+		}
+		else if (zero == 0 || position == -1)
+		{
+			print = ft_strdup(stack);
+			*pprint = print;
+			position = 0;
+			free (storage);
+			return (NULL);
 		}
 	}
-	free (buffer);
-	return (stack);
+	return (0);
 }
 
 char	*get_next_line(int fd)
 {
 	static char	*storage;
 	char 		*buffer;
+	char		*pprint;
+	char		*stack;
 
+	pprint = 0;
 	buffer = (char *)malloc((BUFFER_SIZE + 1)* sizeof(char));
 	if (fd < 0 || BUFFER_SIZE <= 0)
 	{
@@ -172,11 +186,12 @@ char	*get_next_line(int fd)
 		return (0);
 	}
 	if (!storage)
-		storage = (char *)malloc(1 * sizeof(char));
+		storage = (char *)ft_calloc(1, sizeof(char));
 	if (!storage || !buffer)
 		return (0);
-	storage = get_text_stored(fd, storage, buffer);
-	return (storage);
+	stack = get_text_stored(fd, storage, buffer, &pprint);
+	storage = stack;
+	return (pprint);
 }
 
 int	main(void)
@@ -187,9 +202,9 @@ int	main(void)
 	i = 0;
 	fd = 0;
 	fd = open("private.txt", O_RDONLY);
-	while (i < 2)
+	while (i < 6)
 	{
-		get_next_line(fd);
+		printf("%s", get_next_line(fd));
 		i++;
 	}
 	close(fd);
