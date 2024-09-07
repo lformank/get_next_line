@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_old.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lformank <lformank@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/07 12:08:35 by lformank          #+#    #+#             */
-/*   Updated: 2024/09/07 18:25:57 by lformank         ###   ########.fr       */
+/*   Created: 2024/08/25 17:32:10 by lformank          #+#    #+#             */
+/*   Updated: 2024/09/07 14:55:02 by lformank         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(const char *s)
+int	ft_strlen(const char *s)
 {
 	int	i;
 
 	i = 0;
-	while (s[i])
+	while (s[i] != 0)
 		i++;
 	return (i);
 }
@@ -38,6 +38,18 @@ char	*ft_calloc(int nmemb, int size)
 		i++;
 	}
 	return (ptr);
+}
+
+void	putstr(char *s, int len)
+{
+	int	i;
+
+	i = 0;
+	while (i <= len || s[i] != '\0')
+	{
+		write(1, &s[i], 1);
+		i++;
+	}
 }
 
 char	*ft_strjoin(char const *s1, char const *s2)
@@ -63,7 +75,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (dest);
 }
 
-size_t	search_newline(char *storage)
+int	search_newline(char *storage)
 {
 	int	i;
 
@@ -80,7 +92,7 @@ size_t	search_newline(char *storage)
 char	*ft_strdup(const char *s)
 {
 	char	*ptr;
-	size_t	i;
+	int		i;
 
 	i = 0;
 	while (s[i] != '\0')
@@ -95,23 +107,24 @@ char	*ft_strdup(const char *s)
 		i++;
 	}
 	ptr[i] = '\0';
+	free ((void *)s);
 	return (ptr);
 }
 
-char	*ft_substr(const char *s, size_t start, size_t len)
+char	*ft_substr(const char *s, unsigned int start, int len)
 {
-	char	*dest;
-	size_t	j;
+	char				*dest;
+	unsigned int		j;
 
 	j = 0;
-	if (start >= ft_strlen(s))
+	if (start >= (unsigned int)ft_strlen(s))
 		return (ft_strdup(""));
-	if (len > (ft_strlen(s) + start))
-		len = (ft_strlen(s) + start);
-	dest = ft_calloc((int)len + 1, sizeof(char));
+	if (len > ft_strlen(s + start))
+		len = ft_strlen(s + start);
+	dest = ft_calloc(len + 1, sizeof(char));
 	if (!dest)
 		return (0);
-	while (j < len)
+	while (j < (unsigned int)len)
 	{
 		dest[j] = s[j + start];
 		j++;
@@ -122,32 +135,29 @@ char	*ft_substr(const char *s, size_t start, size_t len)
 
 char	*get_text_stored(int fd, char *stack, char *buffer, char **pprint)
 {
-	int		coppied;
+	int		zero;
 	int		position;
 	char	*print;
 	char	*storage;
 
-	coppied = BUFFER_SIZE;
+	zero = BUFFER_SIZE;
 	position = 1;
 	storage = 0;
-	while (coppied <= BUFFER_SIZE && coppied != 0)
+	print = 0;
+	while (zero == BUFFER_SIZE && position != 0)
 	{
-		coppied = read(fd, buffer, BUFFER_SIZE);
+		zero = read(fd, buffer, BUFFER_SIZE);
 		stack = ft_strjoin(stack, buffer);
 		position = search_newline(stack);
-		if (position == -1)
-		{
-			
-		}
+		if (zero <= BUFFER_SIZE && zero != 0)
 		{
 			print = ft_substr(stack, 0, position + 1);
 			*pprint = print;
 			storage = ft_substr(stack, position + 1, ft_strlen(stack) - (position + 1));
-			printf ("%s", storage);
 			free (stack);
 			return (storage);
 		}
-		else
+		else if (zero == 0 || position == -1)
 		{
 			*pprint = stack;
 			position = 0;
@@ -166,6 +176,7 @@ char	*get_next_line(int fd)
 	char		*stack;
 
 	pprint = 0;
+	free (pprint);
 	buffer = (char *)malloc((BUFFER_SIZE + 1)* sizeof(char));
 	if (fd < 0 || BUFFER_SIZE <= 0)
 	{
@@ -190,7 +201,7 @@ int	main(void)
 	i = 0;
 	fd = 0;
 	fd = open("private.txt", O_RDONLY);
-	while (i < 1)
+	while (i < 12)
 	{
 		printf("%s", get_next_line(fd));
 		i++;
@@ -198,3 +209,4 @@ int	main(void)
 	close (fd);
 	return (0);
 }
+
