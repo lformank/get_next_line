@@ -6,7 +6,7 @@
 /*   By: lformank <lformank@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:08:35 by lformank          #+#    #+#             */
-/*   Updated: 2024/09/27 09:25:06 by lformank         ###   ########.fr       */
+/*   Updated: 2024/09/27 13:33:57 by lformank         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,18 @@ char	*ft_print(char *stack, int index, char **pprint)
 {
 	char	*print;
 	char	*storage;
+	char	*rest;
 
+	rest = 0;
 	storage = 0;
 	storage = ft_strdup(stack);
 	print = ft_substr(stack, 0, index + 1);
 	*pprint = print;
-	stack = ft_substr(storage, index + 1, ft_strlen(stack) - (index + 1));
-	index = search_newline(stack);
-	return (stack);
+	rest = ft_substr(storage, index + 1, ft_strlen(storage) - (index + 1));
+	free(storage);
+	free(stack);
+	index = search_newline(rest);
+	return (rest);
 }
 
 char	*get_text_stored(int fd, char *stack, char *buffer, char **pprint)
@@ -58,12 +62,14 @@ char	*get_text_stored(int fd, char *stack, char *buffer, char **pprint)
 	while (index != -1 && stack != NULL && coppied != 0)
 	{
 		stack = ft_print(stack, index, pprint);
-		break ;
+		free(buffer);
+		break;
 	}
 	if (coppied == 0)
 	{
-		print = ft_strdup(stack);
+		print = ft_substr(stack, 0, ft_strlen(stack));
 		*pprint = print;
+		free(buffer);
 	}
 	return (stack);
 }
@@ -73,12 +79,11 @@ char	*get_next_line(int fd)
 	static char	*storage;
 	char		*buffer;
 	char		*pprint;
-	char		*stack;
-
+	char		*depository;
+//	int			*flag;
+	
 	pprint = 0;
-	buffer = 0;
-	if (!buffer)
-		buffer = (char *)ft_calloc((BUFFER_SIZE + 1), sizeof(char));
+	buffer = (char *)ft_calloc((BUFFER_SIZE + 1), sizeof(char));
 	if (fd < 0 || BUFFER_SIZE <= 0)
 	{
 		free(buffer);
@@ -89,26 +94,27 @@ char	*get_next_line(int fd)
 		storage = (char *)ft_calloc(1, sizeof(char));
 	if (!storage || !buffer)
 		return (0);
-	stack = get_text_stored(fd, storage, buffer, &pprint);
-	storage = ft_strdup(stack);
-	free (buffer);
-	free (stack);
+	depository = get_text_stored(fd, storage, buffer, &pprint);
+	storage = ft_strdup(depository);
+	free (depository);
 	return (pprint);
 }
 
-/*int	main(void)
+int	main(void)
 {
 	int	fd;
 	int	i;
+	char *res;
 
 	i = 0;
 	fd = 0;
 	fd = open("private.txt", O_RDONLY);
-	while (i < 3)
+	while (i < 4)
 	{
-		printf("result: %s", get_next_line(fd));
+		printf("result: %s", res = get_next_line(fd));
+		free(res);
 		i++;
 	}
 	close (fd);
 	return (0);
-}*/
+}
