@@ -6,7 +6,7 @@
 /*   By: lformank <lformank@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 13:51:36 by lformank          #+#    #+#             */
-/*   Updated: 2024/09/07 12:51:11 by lformank         ###   ########.fr       */
+/*   Updated: 2024/09/27 09:18:52 by lformank         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,5 @@ char	*ft_strjoin(char const *s1, char const *s2);
 void	putstr(char *s, int len);
 char	*ft_calloc(int nmemb, int size);
 size_t	ft_strlen(const char *s);
-
+char	*ft_print(char *stack, int index, char **pprint);
 #endif
