@@ -6,7 +6,7 @@
 /*   By: lformank <lformank@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:08:35 by lformank          #+#    #+#             */
-/*   Updated: 2024/09/27 13:33:57 by lformank         ###   ########.fr       */
+/*   Updated: 2024/09/27 14:36:43 by lformank         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,15 @@ size_t	search_newline(char *storage)
 	return (-1);
 }
 
-char	*ft_print(char *stack, int index, char **pprint)
+char	*ft_print(char *stack, int index, char **print)
 {
-	char	*print;
 	char	*storage;
 	char	*rest;
 
 	rest = 0;
 	storage = 0;
 	storage = ft_strdup(stack);
-	print = ft_substr(stack, 0, index + 1);
-	*pprint = print;
+	*print = ft_substr(stack, 0, index + 1);
 	rest = ft_substr(storage, index + 1, ft_strlen(storage) - (index + 1));
 	free(storage);
 	free(stack);
@@ -44,11 +42,10 @@ char	*ft_print(char *stack, int index, char **pprint)
 	return (rest);
 }
 
-char	*get_text_stored(int fd, char *stack, char *buffer, char **pprint)
+char	*get_text_stored(int fd, char *stack, char *buffer, char **print)
 {
 	int		coppied;
 	int		index;
-	char	*print;
 
 	index = search_newline(stack);
 	coppied = 1;
@@ -61,16 +58,12 @@ char	*get_text_stored(int fd, char *stack, char *buffer, char **pprint)
 	}
 	while (index != -1 && stack != NULL && coppied != 0)
 	{
-		stack = ft_print(stack, index, pprint);
-		free(buffer);
+		stack = ft_print(stack, index, print);
 		break;
 	}
 	if (coppied == 0)
-	{
-		print = ft_substr(stack, 0, ft_strlen(stack));
-		*pprint = print;
-		free(buffer);
-	}
+		*print = ft_substr(stack, 0, ft_strlen(stack));
+	free(buffer);
 	return (stack);
 }
 
@@ -78,11 +71,10 @@ char	*get_next_line(int fd)
 {
 	static char	*storage;
 	char		*buffer;
-	char		*pprint;
+	char		*print;
 	char		*depository;
-//	int			*flag;
-	
-	pprint = 0;
+
+	print = 0;
 	buffer = (char *)ft_calloc((BUFFER_SIZE + 1), sizeof(char));
 	if (fd < 0 || BUFFER_SIZE <= 0)
 	{
@@ -94,10 +86,10 @@ char	*get_next_line(int fd)
 		storage = (char *)ft_calloc(1, sizeof(char));
 	if (!storage || !buffer)
 		return (0);
-	depository = get_text_stored(fd, storage, buffer, &pprint);
+	depository = get_text_stored(fd, storage, buffer, &print);
 	storage = ft_strdup(depository);
 	free (depository);
-	return (pprint);
+	return (print);
 }
 
 int	main(void)

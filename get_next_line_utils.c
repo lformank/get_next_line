@@ -6,7 +6,7 @@
 /*   By: lformank <lformank@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 17:33:38 by lformank          #+#    #+#             */
-/*   Updated: 2024/09/27 12:37:44 by lformank         ###   ########.fr       */
+/*   Updated: 2024/09/27 14:19:37 by lformank         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		dest[j++] = s2[i++];
 	dest[j] = '\0';
 	free ((void *)s1);
-	free ((void *)s2);
 	return (dest);
 }
 
@@ -103,6 +102,5 @@ char	*ft_substr(const char *s, size_t start, size_t len)
 		j++;
 	}
 	dest[j] = '\0';
-	//free ((void *)s);
 	return (dest);
 }

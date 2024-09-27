@@ -6,7 +6,7 @@
 /*   By: lformank <lformank@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 13:51:36 by lformank          #+#    #+#             */
-/*   Updated: 2024/09/27 11:57:40 by lformank         ###   ########.fr       */
+/*   Updated: 2024/09/27 14:36:12 by lformank         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 # include <fcntl.h>
 
 char	*get_next_line(int fd);
-char	*get_text_stored(int fd, char *stack, char *buffer, char **pprint);
+char	*get_text_stored(int fd, char *stack, char *buffer, char **print);
 char	*ft_substr(const char *s, size_t start, size_t len);
 char	*ft_strdup(const char *s);
 size_t	search_newline(char *storage);
@@ -35,5 +35,5 @@ char	*ft_strjoin(char const *s1, char const *s2);
 void	putstr(char *s, int len);
 char	*ft_calloc(int nmemb, int size);
 size_t	ft_strlen(const char *s);
-char	*ft_print(char *stack, int index, char **pprint);
+char	*ft_print(char *stack, int index, char **print);
 #endif
