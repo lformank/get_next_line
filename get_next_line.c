@@ -6,7 +6,7 @@
 /*   By: lformank <lformank@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:08:35 by lformank          #+#    #+#             */
-/*   Updated: 2024/09/27 14:36:43 by lformank         ###   ########.fr       */
+/*   Updated: 2024/09/29 11:35:10 by lformank         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ char	*ft_print(char *stack, int index, char **print)
 	return (rest);
 }
 
-char	*get_text_stored(int fd, char *stack, char *buffer, char **print)
+char	*get_text_stored(int fd, char *stack, char *buffer, char **print, int *flag)
 {
 	int		coppied;
 	int		index;
@@ -61,8 +61,12 @@ char	*get_text_stored(int fd, char *stack, char *buffer, char **print)
 		stack = ft_print(stack, index, print);
 		break;
 	}
-	if (coppied == 0)
+	if (coppied == 0 && *flag != 1)
+	{
 		*print = ft_substr(stack, 0, ft_strlen(stack));
+		*flag = 1;
+	}
+	printf("flag: %d", *flag);
 	free(buffer);
 	return (stack);
 }
@@ -72,9 +76,11 @@ char	*get_next_line(int fd)
 	static char	*storage;
 	char		*buffer;
 	char		*print;
-	char		*depository;
+	static int	*flag;
 
 	print = 0;
+	if (!flag)
+		flag = (int *)ft_calloc(1, sizeof(int));
 	buffer = (char *)ft_calloc((BUFFER_SIZE + 1), sizeof(char));
 	if (fd < 0 || BUFFER_SIZE <= 0)
 	{
@@ -84,12 +90,18 @@ char	*get_next_line(int fd)
 	}
 	if (!storage)
 		storage = (char *)ft_calloc(1, sizeof(char));
-	if (!storage || !buffer)
+	if (!storage || !buffer || !flag)
 		return (0);
-	depository = get_text_stored(fd, storage, buffer, &print);
-	storage = ft_strdup(depository);
-	free (depository);
-	return (print);
+	if (*flag != 1)
+	{
+		storage = get_text_stored(fd, storage, buffer, &print, flag);
+		return (print);
+	}
+	free (print);
+	printf("print: %s", print);
+	free (flag);
+	free (buffer);
+	return (NULL);
 }
 
 int	main(void)
@@ -101,7 +113,7 @@ int	main(void)
 	i = 0;
 	fd = 0;
 	fd = open("private.txt", O_RDONLY);
-	while (i < 4)
+	while (i < 6)
 	{
 		printf("result: %s", res = get_next_line(fd));
 		free(res);
