@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lformank <lformank@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:08:35 by lformank          #+#    #+#             */
-/*   Updated: 2024/10/05 15:09:26 by lformank         ###   ########.fr       */
+/*   Updated: 2024/10/05 15:09:29 by lformank         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 size_t	search_newline(char *storage)
 {
@@ -91,30 +91,30 @@ char	*get_text_scanned(int fd, char *stack)
 
 char	*get_next_line(int fd)
 {
-	static char	*storage;
+	static char	*storage[MAX];
 	char		*print;
 	char		*scanned;
 
 	if (BUFFER_SIZE <= 0 || fd < 0)
 	{
-		free(storage);
-		storage = NULL;
+		free(storage[fd]);
+		storage[fd] = NULL;
 		return (NULL);
 	}
-	if (!storage)
-		storage = (char *)ft_calloc(1, sizeof(char));
-	if (!storage)
+	if (!storage[fd])
+		storage[fd] = (char *)ft_calloc(1, sizeof(char));
+	if (!storage[fd])
 		return (NULL);
-	scanned = get_text_scanned(fd, storage);
+	scanned = get_text_scanned(fd, storage[fd]);
 	if (!scanned)
 	{
-		free(storage);
-		return (storage = NULL);
+		free(storage[fd]);
+		return (storage[fd] = NULL);
 	}
 	print = ft_print(scanned);
 	if (!print)
-		return (storage = NULL);
-	storage = get_text_stored(scanned);
+		return (storage[fd] = NULL);
+	storage[fd] = get_text_stored(scanned);
 	return (print);
 }
 
@@ -127,16 +127,22 @@ char	*get_next_line(int fd)
 
 	i = 0;
 	fd1 = open("private.txt", O_RDONLY);
-	fd2 = open("private.txt", O_RDONLY);
 	while (i < 2)
 	{
 		printf("result1: %s\n", res = get_next_line(fd1));
 		free(res);
 		i++;
 	}
-	while (i < 1)
+	fd2 = open("notprivate.txt", O_RDONLY);
+	while (i < 2)
 	{
 		printf("result2: %s\n", res = get_next_line(fd2));
+		free(res);
+		i++;
+	}
+	while (i < 2)
+	{
+		printf("result1: %s\n", res = get_next_line(fd1));
 		free(res);
 		i++;
 	}
