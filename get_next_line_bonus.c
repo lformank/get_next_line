@@ -6,7 +6,7 @@
 /*   By: lformank <lformank@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:08:35 by lformank          #+#    #+#             */
-/*   Updated: 2024/10/05 15:09:29 by lformank         ###   ########.fr       */
+/*   Updated: 2024/10/05 15:45:23 by lformank         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ char	*get_text_stored(char *scanned)
 		return (NULL);
 	}
 	free(scanned);
+	scanned = NULL;
 	return (rest);
 }
 
@@ -58,7 +59,10 @@ char	*ft_print(char *scanned)
 		index++;
 	print = ft_substr(scanned, 0, index + 1);
 	if (!print)
+	{
 		free(scanned);
+		scanned = NULL;
+	}
 	return (print);
 }
 
